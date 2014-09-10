@@ -64,5 +64,5 @@ function start_etcd {
   etcd -data-dir ${ETCD_DIR} -l ${host}:${port} >/tmp/etcd.log 2>/tmp/etcd.log &
   export ETCD_PID=$!
 
-  wait_for_url "http://${ETCD_HOST}:${ETCD_PORT}/v2/keys/" "etcd: "
+  wait_for_url "http://${host}:${port}/v2/keys/" "etcd: "
 }
