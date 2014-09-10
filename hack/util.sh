@@ -59,8 +59,10 @@ function start_etcd {
 
   # Start etcd
   export ETCD_DIR=$(mktemp -d -t test-etcd.XXXXXX)
-  etcd -name test -data-dir ${ETCD_DIR} -bind-addr ${host}:${port} >/dev/null 2>/dev/null &
+  #etcd -name test -data-dir ${ETCD_DIR} -bind-addr ${host}:${port} >/dev/null 2>/dev/null &
+  # use latest etcd
+  etcd -data-dir ${ETCD_DIR} -l ${host}:${port} >/tmp/etcd.log 2>/tmp/etcd.log &
   export ETCD_PID=$!
 
-  wait_for_url "http://localhost:4001/v2/keys/" "etcd: "
+  wait_for_url "http://${ETCD_HOST}:${ETCD_PORT}/v2/keys/" "etcd: "
 }
