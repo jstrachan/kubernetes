@@ -41,14 +41,18 @@ API_PORT=${API_PORT:-8080}
 API_HOST=${API_HOST:-127.0.0.1}
 KUBELET_PORT=${KUBELET_PORT:-10250}
 
+ETCD_HOST=${ETCD_HOST:-127.0.0.1}
+ETCD_PORT=${ETCD_PORT:-4001}
+
+
 GO_OUT=$(dirname $0)/../_output/go/bin
 
 APISERVER_LOG=/tmp/apiserver.log
 "${GO_OUT}/apiserver" \
   --address="${API_HOST}" \
   --port="${API_PORT}" \
-  --etcd_servers="http://127.0.0.1:4001" \
-  --machines="127.0.0.1" >"${APISERVER_LOG}" 2>&1 &
+  --etcd_servers="http://${ETCD_HOST}:${ETCD_PORT}" \
+  --machines="${API_HOST}" >"${APISERVER_LOG}" 2>&1 &
 APISERVER_PID=$!
 
 CTLRMGR_LOG=/tmp/controller-manager.log
@@ -58,9 +62,9 @@ CTLRMGR_PID=$!
 
 KUBELET_LOG=/tmp/kubelet.log
 "${GO_OUT}/kubelet" \
-  --etcd_servers="http://127.0.0.1:4001" \
-  --hostname_override="127.0.0.1" \
-  --address="127.0.0.1" \
+  --etcd_servers="http://${ETCD_HOST}:${ETCD_PORT}" \
+  --hostname_override="${API_HOST}" \
+  --address="${API_HOST}" \
   --port="$KUBELET_PORT" >"${KUBELET_LOG}" 2>&1 &
 KUBELET_PID=$!
 
